@@ -1,23 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
-
-// MongoDB Connection
-const connectDB = async () => {
-  try {
-    await mongoose.connect('mongodb+srv://dhinaashwin11:MongoDBpassword@cluster-1.golhm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster-1', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    process.exit(1);
-  }
-};
- 
-
+require('dotenv').config(); 
+const app = express();
+const port = process.env.PORT || 5000;
+const mongoURI = 'mongodb+srv://dhinaashwin11:MongoDBpassword@cluster-1.golhm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster-1';
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -34,7 +27,6 @@ const allowCors = fn => async (req, res) => {
   }
   return await fn(req, res)
 }
-
 const handler = (req, res) => {
   const d = new Date()
   res.end(d.toString())
@@ -70,11 +62,6 @@ const Item = mongoose.model('Item', itemSchema);
 const Account = mongoose.model('Account', accountSchema);
 const Order = mongoose.model('Orders', ordersSchema);
 
-// Initialize Express App
-const app = express();
-
-// Connect to MongoDB
-connectDB();
 
 app.use(cors({
   origin:['https://mugilherbals.vercel.app'],          

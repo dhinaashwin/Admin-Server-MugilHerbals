@@ -59,7 +59,7 @@ const Account = mongoose.model('Account', accountSchema);
 const Order = mongoose.model('Orders', ordersSchema);
 
 // Item Routes
-app.post('/api/items', async (req, res) => {
+app.post('/items', async (req, res) => {
   try {
     const newItem = new Item(req.body);
     await newItem.save();
@@ -69,7 +69,7 @@ app.post('/api/items', async (req, res) => {
   }
 });
 
-app.get('/api/items', async (req, res) => {
+app.get('/items', async (req, res) => {
   try {
     const items = await Item.find();
     res.status(200).json(items);

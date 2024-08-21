@@ -2,31 +2,40 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config(); 
-
 const app = express();
 const port = process.env.PORT || 5000;
+app.use(cors());
+app.use(express.json());
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Origin', 'https://ecommerce-admin-072024front.vercel.app','http://localhost:5173/')
+  // another common pattern
+  // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  return await fn(req, res)
+}
+const handler = (req, res) => {
+  const d = new Date()
+  res.end(d.toString())
+}  
 const mongoURI = 'mongodb+srv://dhinaashwin11:MongoDBpassword@cluster-1.golhm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster-1';
-
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
-
-// Use CORS middleware with specific origins allowed
-app.use(cors({
-  origin: ['https://mugilherbals.vercel.app'], // Add localhost for testing if needed
-  methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
-  credentials: true,
-}));
-
-app.use(express.json());
-
 app.get('/', (req, res) => {
   res.send('Connected');
 });
-
 // Define Schemas and Models
 const itemSchema = new mongoose.Schema({
   id: String,

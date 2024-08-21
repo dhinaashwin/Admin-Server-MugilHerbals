@@ -2,35 +2,31 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config(); 
+
 const app = express();
 const port = process.env.PORT || 5000;
 const mongoURI = 'mongodb+srv://dhinaashwin11:MongoDBpassword@cluster-1.golhm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster-1';
+
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
-const allowCors = fn => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Credentials', true)
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  // another common pattern
-  // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  )
-  if (req.method === 'OPTIONS') {
-    res.status(200).end()
-    return
-  }
-  return await fn(req, res)
-}
-const handler = (req, res) => {
-  const d = new Date()
-  res.end(d.toString())
-}
+
+// Use CORS middleware with specific origins allowed
+app.use(cors({
+  origin: ['https://mugilherbals.vercel.app'], // Add localhost for testing if needed
+  methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Connected');
+});
+
 // Define Schemas and Models
 const itemSchema = new mongoose.Schema({
   id: String,
@@ -61,20 +57,6 @@ const ordersSchema = new mongoose.Schema({
 const Item = mongoose.model('Item', itemSchema);
 const Account = mongoose.model('Account', accountSchema);
 const Order = mongoose.model('Orders', ordersSchema);
-
-
-app.use(cors({
-  origin:['https://mugilherbals.vercel.app'],          
-  methods:['POST','GET'],
-  credentials:true }));
-
-app.use(express.json());
-
-
-
-app.get('/', (req, res) => {
-  res.send('Connected');
-});
 
 // Item Routes
 app.post('/api/items', async (req, res) => {
@@ -171,5 +153,4 @@ app.get('/api/orders', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));

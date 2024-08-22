@@ -4,16 +4,15 @@ const mongoose = require('mongoose');
 require('dotenv').config(); 
 const app = express();
 const port = process.env.PORT || 5000;
-app.use(cors({
-  origin:['http://localhost:5173'],
-  methods:['POST','GET'],
-  credentials:true }));
-app.use(express.json());
 
-const handler = (req, res) => {
-  const d = new Date()
-  res.end(d.toString())
-}  
+// CORS configuration
+app.use(cors({
+  origin: 'http://localhost:5173', // Update with your frontend URL
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'], // Allowed headers
+}));
+app.use(express.json());
 const mongoURI = 'mongodb+srv://dhinaashwin11:MongoDBpassword@cluster-1.golhm.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster-1';
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -21,9 +20,11 @@ mongoose.connect(mongoURI, {
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
+
 app.get('/', (req, res) => {
   res.send('Connected');
 });
+
 // Define Schemas and Models
 const itemSchema = new mongoose.Schema({
   id: String,

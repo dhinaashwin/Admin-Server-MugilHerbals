@@ -1,16 +1,17 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
-
+const mongoose = require('mongoose');
+require('dotenv').config(); 
 const app = express();
-const port = process.env.PORT || 3001;
-
-app.use(cors());
+const port = process.env.PORT || 5000;
+app.use(cors({
+  origin:['*'],  
+  methods:['POST','GET'],
+  credentials:true }));
 app.use(express.json());
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
-  res.setHeader('Access-Control-Allow-Origin', 'https://mugilherbals.vercel.app')
+  res.setHeader('Access-Control-Allow-Origin', '*')
   // another common pattern
   // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
@@ -33,8 +34,8 @@ mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 app.get('/', (req, res) => {
   res.send('Connected');
 });
@@ -89,7 +90,7 @@ app.get('/items', async (req, res) => {
   }
 });
 
-app.get('/api/items/:id', async (req, res) => {
+app.get('/items/:id', async (req, res) => {
   try {
     const item = await Item.findOne({ id: req.params.id });
     if (!item) {
@@ -101,7 +102,7 @@ app.get('/api/items/:id', async (req, res) => {
   }
 });
 
-app.put('/api/items/:id', async (req, res) => {
+app.put('/items/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const updatedItem = await Item.findOneAndUpdate({ id }, req.body, { new: true });
@@ -114,7 +115,7 @@ app.put('/api/items/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/items/:id', async (req, res) => {
+app.delete('/items/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const deletedItem = await Item.findOneAndDelete({ id });
@@ -129,7 +130,7 @@ app.delete('/api/items/:id', async (req, res) => {
 });
 
 // Account Routes
-app.post('/api/account/check-user', async (req, res) => {
+app.post('/account/check-user', async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -146,7 +147,7 @@ app.post('/api/account/check-user', async (req, res) => {
 });
 
 // Orders Routes
-app.get('/api/orders', async (req, res) => {
+app.get('/orders', async (req, res) => {
   try {
     const orders = await Order.find().lean();
 
@@ -163,6 +164,5 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Start the server
+app.listen(port, () => console.log(`Server running on port ${port}`));

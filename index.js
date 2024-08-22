@@ -4,14 +4,10 @@ const mongoose = require('mongoose');
 require('dotenv').config(); 
 const app = express();
 const port = process.env.PORT || 5000;
-app.use(cors({
-  origin:['https://mugilherbals.vercel.app'],  
-  methods:['POST','GET'],
-  credentials:true }));
 app.use(express.json());
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
-  res.setHeader('Access-Control-Allow-Origin', 'https://ecommerce-admin-072024front.vercel.app','http://localhost:5173/')
+  res.setHeader('Access-Control-Allow-Origin', 'https://mugilherbals.vercel.app','http://localhost:5173/')
   // another common pattern
   // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')

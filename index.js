@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Update with your frontend URL
+  origin: 'https://mugilherbals.vercel.app/', // Update with your frontend URL
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'], // Allowed headers
